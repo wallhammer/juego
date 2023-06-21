@@ -106,9 +106,29 @@ class NPC(pg.sprite.Sprite):
         self.rect.y = y * TILESIZE
         self.player = player
         self.face = 0
+        self.image = pg.rect((TILESIZE, PLAYERHIGHT))
 
+    def update(self):
+        self.r = math.sqrt(math.pow((self.player.x - self.x),2)+math.pow((self.player.y - self.y),2))
+        if self.player.y < self.y and self.r < 64:
+            if self.player.x  < self.x + 12 and self.player.x > self.x - 10:
+                self.faceRight = 2
+
+        if self.player.x < self.x and self.r < 64:
+            if self.player.y > self.y - 18 and self.player.y < self.y + 1:
+                self.faceRight = 3
+
+        if self.player.y > self.y and self.r < 64:
+            if self.player.x  < self.x + 12 and self.player.x > self.x - 12:
+                self.faceRight = 0    
+
+        if self.r < 64 and self.player.x > self.x:
+            if self.player.y > self.y - 18 and self.player.y < self.y + 3:
+                self.faceRight = 1
+        
+            
     def draw(self, surface, camara):
-        surface.blit(self.npc, camara.apply(self))
+        surface.blit(self.npc, camara.apply(self),(0,self.face* 64,TILESIZE,PLAYERHIGHT))
 
     
 
