@@ -12,6 +12,7 @@ class Map:
         self.tileheight = len(self.data)
         self.width = self.tilewidth * TILESIZE
         self.height = self.tileheight * TILESIZE
+        print(self.width, self.height)
 
 class Camera:
     def __init__(self, width, height):

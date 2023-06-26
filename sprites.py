@@ -20,7 +20,7 @@ class Player(pg.sprite.Sprite):
         self.face = 4
         self.clock = pg.time.Clock()
         self.frame = 0
-        self.live = 10
+        self.live = [4,4,4,4,1]
         
     def Live(self):
         return self.live       
@@ -54,8 +54,25 @@ class Player(pg.sprite.Sprite):
             self.vx *= 0.7071
             self.vy *= 0.7071
 
-
-
+    def collide_with_npcs(self, dir):
+        if dir == 'x':
+            hits = pg.sprite.spritecollide(self, self.game.npc, False)
+            if hits:
+                if self.vx > 0:
+                    self.x = hits[0].rect.left - self.rect.width +5
+                if self.vx < 0:
+                    self.x = hits[0].rect.right -5
+                self.vx = 0
+                self.rect.x = self.x
+        if dir == 'y':
+            hits = pg.sprite.spritecollide(self, self.game.npc, False)
+            if hits:
+                if self.vy > 0:
+                    self.y = hits[0].rect.top - self.rect.height
+                if self.vy < 0:
+                    self.y = hits[0].rect.bottom 
+                self.vy = 0
+                self.rect.y = self.y
 
     def collide_with_walls(self, dir):
         if dir == 'x':
@@ -83,8 +100,10 @@ class Player(pg.sprite.Sprite):
         self.y += self.vy * self.game.dt
         self.rect.x = self.x
         self.collide_with_walls('x')
+        self.collide_with_npcs('x')
         self.rect.y = self.y
         self.collide_with_walls('y')
+        self.collide_with_npcs('y')
        
         if self.frame >4:
             self.frame = 0
@@ -96,26 +115,33 @@ class Player(pg.sprite.Sprite):
         
 class NPC(pg.sprite.Sprite):
     def __init__(self, game, x, y):
-        self.groups = game.all_sprites
+        self.groups = game.all_sprites, game.walls
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.x = x * TILESIZE
-        self.y = y * TILESIZE
         self.npc = pg.image.load("assets/npc.png").convert_alpha()
         self.npc_rect = self.npc.get_rect()
         self.vx, self.vy = 0, 0
         self.face = 4
         self.frame = 0
+        self.image = pg.Surface((TILESIZE, PLAYERHIGHT))
+        self.image = self.image.convert_alpha()
+        self.image.fill((0, 0, 0, 0))
+        self.rect = self.image.get_rect()
+        self.x = x 
+        self.y = y  
+        self.rect.x = x * TILESIZE
+        self.rect.y = y * TILESIZE
+        
+    def look(self):
+        self.r = math.sqrt(math.pow((self.game.player.x - self.rect.x),2)+math.pow((self.game.player.y - self.rect.y),2))
+        pass
+            
 
     def update(self):
-       self.frame += 0.1
-
-       if self.frame >=4:
-           self.frame = 0
-        
-            
+       pass
+          
     def draw(self, surface, camara):
-        surface.blit(self.npc, camara.apply(self),(int(self.frame)*32,self.face* 64,TILESIZE,PLAYERHIGHT))
+        surface.blit(self.npc, camara.apply(self),(int(self.frame)*32, 0,TILESIZE,PLAYERHIGHT))
 
     
 

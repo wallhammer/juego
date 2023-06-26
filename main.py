@@ -16,7 +16,7 @@ class Game:
         self.load = pg.image.load
         self.floor = self.load("assets/tiles4.png").convert_alpha()
         
-
+ 
         
 
     def load_data(self):
@@ -28,6 +28,7 @@ class Game:
         # initialize all variables and do all the setup for a new game
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
+        self.npc = pg.sprite.Group()
         
         for row, tiles in enumerate(self.map.data):
             for col, tile in enumerate(tiles):
@@ -35,6 +36,8 @@ class Game:
                     Wall(self, col, row)
                 if tile == 'P':
                     self.player = Player(self, col, row)
+                if tile =='n':
+                    NPC(self,col,row)
         self.camera = Camera(self.map.width, self.map.height)
         self.hub = HUB(self.player)
 
@@ -72,7 +75,6 @@ class Game:
         self.screen.fill(BGCOLOR)
         self.draw_floor()
         self.draw_grid()
-        
         for sprite in self.all_sprites:
             sprite.draw(self.screen,self.camera)
         self.hub.draw(self.screen)
